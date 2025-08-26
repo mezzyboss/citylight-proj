@@ -1,30 +1,71 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Citylight Space Booking App
 
-Currently, two official plugins are available:
+A modern React + Vite application for booking spaces, with dynamic time slot management and Supabase backend integration.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+- Select date and time for booking
+- Complete a booking questionnaire
+- Confirm and review booking details
+- Dynamic time slot availability (Supabase)
+- Demo mode with mock data
+- Responsive, modern UI (Tailwind CSS)
 
-## Expanding the ESLint configuration
+## Tech Stack
+- React
+- Vite
+- TypeScript
+- Tailwind CSS
+- Supabase (database & API)
+- Azure Static Web Apps (recommended for hosting)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Getting Started
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+### 1. Clone the repository
+```bash
+git clone https://github.com/mezzyboss/citylight-proj.git
+cd citylight-proj
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### 2. Install dependencies
+```bash
+npm install
+```
+
+### 3. Environment Variables
+Create a `.env` file in the project root:
+```
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_KEY=your-supabase-anon-key
+```
+
+### 4. Run locally
+```bash
+npm run dev
+```
+
+### 5. Build for production
+```bash
+npm run build
+```
+
+## Supabase Setup
+- Create tables `bookings` and `time_slots` in Supabase (see `/docs` or ask Copilot for SQL scripts)
+- Add time slot records for each bookable day
+
+## Azure Static Web Apps Deployment
+1. Push your code to GitHub
+2. Create a Static Web App in Azure Portal
+3. Set app location to `/`, output location to `dist`
+4. Add environment variables in Azure Portal
+5. Deploy and access your app via the provided URL
+
+## Switching Between Demo and Live Calendar
+- To use the demo calendar, import and use `BookingCalendarDemo` in your components
+- To use the live calendar, import and use `BookingCalendar` (Supabase-powered)
+
+## License
+MIT
+
+---
+For questions or help, contact mezzyboss or use GitHub Issues.
