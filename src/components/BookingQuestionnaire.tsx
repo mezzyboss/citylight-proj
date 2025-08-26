@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -21,8 +22,8 @@ import {
 import { Checkbox } from "./ui/checkbox";
 
 interface BookingQuestionnaireProps {
-  onSubmit: (formData: BookingFormData) => void;
-  onBack: () => void;
+  onSubmit?: (formData: BookingFormData) => void;
+  onBack?: () => void;
   selectedDate?: Date;
   selectedTimeSlot?: string;
   selectedDuration?: number;
@@ -40,21 +41,25 @@ export interface BookingFormData {
 }
 
 const BookingQuestionnaire: React.FC<BookingQuestionnaireProps> = ({
-  onSubmit = () => {},
-  onBack = () => {},
+  onSubmit,
+  onBack,
   selectedDate,
   selectedTimeSlot,
   selectedDuration,
-  initialValues = {},
+  initialValues = {} as Partial<BookingFormData>,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  // Get state from previous route if not provided via props
+  const routeState = location.state || {};
   const [formData, setFormData] = useState<BookingFormData>({
-    intendedUse: initialValues.intendedUse || "",
-    attendees: initialValues.attendees || 1,
-    specialRequirements: initialValues.specialRequirements || "",
-    contactName: initialValues.contactName || "",
-    contactEmail: initialValues.contactEmail || "",
-    contactPhone: initialValues.contactPhone || "",
-    soundEngineer: initialValues.soundEngineer || false,
+    intendedUse: initialValues?.intendedUse || "",
+    attendees: initialValues?.attendees || 1,
+    specialRequirements: initialValues?.specialRequirements || "",
+    contactName: initialValues?.contactName || "",
+    contactEmail: initialValues?.contactEmail || "",
+    contactPhone: initialValues?.contactPhone || "",
+    soundEngineer: initialValues?.soundEngineer || false,
   });
 
   const [errors, setErrors] = useState<
@@ -106,9 +111,17 @@ const BookingQuestionnaire: React.FC<BookingQuestionnaireProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (validateForm()) {
-      onSubmit(formData);
+      if (onSubmit) onSubmit(formData);
+      // Use props if available, else fallback to route state
+      navigate("/confirmation", {
+        state: {
+          ...formData,
+          selectedDate: selectedDate || routeState.selectedDate,
+          selectedTimeSlot: selectedTimeSlot || routeState.selectedTimeSlot,
+          selectedDuration: selectedDuration || routeState.selectedDuration,
+        },
+      });
     }
   };
 
@@ -256,7 +269,7 @@ const BookingQuestionnaire: React.FC<BookingQuestionnaireProps> = ({
       </CardContent>
 
       <CardFooter className="flex justify-between">
-        <Button variant="outline" onClick={onBack}>
+        <Button className="border" onClick={() => navigate(-1)}>
           Back
         </Button>
         <Button onClick={handleSubmit}>Continue</Button>

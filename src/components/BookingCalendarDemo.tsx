@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -35,56 +34,29 @@ interface BookingCalendarProps {
   availableDates?: Date[];
 }
 
-const BookingCalendar = ({
+const BookingCalendarDemo = ({
   onBookingSelect = () => {},
   availableDates = [new Date(), addDays(new Date(), 1), addDays(new Date(), 2)],
 }: BookingCalendarProps) => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    new Date(),
+  );
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(
+    null,
+  );
   const [duration, setDuration] = useState<number>(1);
-  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
-  const [loadingSlots, setLoadingSlots] = useState(false);
 
-  // Helper to format time for DB queries
-  const pad = (n: number) => n.toString().padStart(2, '0');
-  const slotTimes = Array.from({ length: 8 }, (_, i) => {
-    const startHour = 8 + i;
-    const endHour = startHour + 1;
-    return {
-      startTime: `${pad(startHour)}:00`,
-      endTime: `${pad(endHour)}:00`,
-    };
-  });
-
-  useEffect(() => {
-    const fetchSlots = async () => {
-      if (!selectedDate) return;
-      setLoadingSlots(true);
-      const dateStr = selectedDate.toISOString().split('T')[0];
-      const { data, error } = await supabase
-        .from('time_slots')
-        .select('*')
-        .eq('date', dateStr);
-      if (error) {
-        setTimeSlots([]);
-        setLoadingSlots(false);
-        return;
-      }
-      // Map DB slots to UI, fill missing slots as unavailable
-      const slots = slotTimes.map((slot, idx) => {
-        const dbSlot = data?.find((s: any) => s.start_time === slot.startTime);
-        return {
-          id: dbSlot?.id || `${idx + 1}`,
-          startTime: slot.startTime,
-          endTime: slot.endTime,
-          isAvailable: dbSlot ? dbSlot.is_available : false,
-        };
-      });
-      setTimeSlots(slots);
-      setLoadingSlots(false);
-    };
-    fetchSlots();
-  }, [selectedDate]);
+  // Demo/mock time slots
+  const timeSlots: TimeSlot[] = [
+    { id: "1", startTime: "09:00", endTime: "10:00", isAvailable: true },
+    { id: "2", startTime: "10:00", endTime: "11:00", isAvailable: true },
+    { id: "3", startTime: "11:00", endTime: "12:00", isAvailable: false },
+    { id: "4", startTime: "12:00", endTime: "13:00", isAvailable: true },
+    { id: "5", startTime: "13:00", endTime: "14:00", isAvailable: true },
+    { id: "6", startTime: "14:00", endTime: "15:00", isAvailable: true },
+    { id: "7", startTime: "15:00", endTime: "16:00", isAvailable: false },
+    { id: "8", startTime: "16:00", endTime: "17:00", isAvailable: true },
+  ];
 
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date);
@@ -112,7 +84,7 @@ const BookingCalendar = ({
         },
       });
     }
-  } 
+  };
 
   // Function to determine if a date is available
   const isDateAvailable = (date: Date) => {
@@ -167,21 +139,17 @@ const BookingCalendar = ({
             {selectedDate ? (
               <div className="space-y-2">
                 <div className="grid grid-cols-2 gap-2">
-                  {loadingSlots ? (
-                    <div className="text-center py-4">Loading slots...</div>
-                  ) : (
-                    timeSlots.map((slot) => (
-                      <Button
-                        key={slot.id}
-                        className={`flex justify-between items-center bg-white border text-black hover:bg-primary hover:text-white transition-colors duration-150 ${selectedTimeSlot?.id === slot.id ? "bg-primary text-white" : ""} ${!slot.isAvailable ? "opacity-50 cursor-not-allowed" : ""}`}
-                        onClick={() => handleTimeSlotSelect(slot)}
-                        disabled={!slot.isAvailable}
-                      >
-                        <Clock className="h-4 w-4 mr-2" />
-                        <span>{slot.startTime}</span>
-                      </Button>
-                    ))
-                  )}
+                  {timeSlots.map((slot) => (
+                    <Button
+                      key={slot.id}
+                      className={`flex justify-between items-center bg-white border text-black hover:bg-primary hover:text-white transition-colors duration-150 ${selectedTimeSlot?.id === slot.id ? "bg-primary text-white" : ""} ${!slot.isAvailable ? "opacity-50 cursor-not-allowed" : ""}`}
+                      onClick={() => handleTimeSlotSelect(slot)}
+                      disabled={!slot.isAvailable}
+                    >
+                      <Clock className="h-4 w-4 mr-2" />
+                      <span>{slot.startTime}</span>
+                    </Button>
+                  ))}
                 </div>
 
                 {selectedTimeSlot && (
@@ -248,4 +216,4 @@ const BookingCalendar = ({
   );
 };
 
-export default BookingCalendar;
+export default BookingCalendarDemo;

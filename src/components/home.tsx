@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import BookingCalendar from "./BookingCalendar";
+import BookingCalendarDemo from "./BookingCalendarDemo";
 import BookingQuestionnaire from "./BookingQuestionnaire";
 import BookingConfirmation from "./BookingConfirmation";
 
@@ -12,7 +12,7 @@ interface BookingDetails {
   date: Date | null;
   startTime: string | null;
   duration: number | null;
-  purpose: string;
+  intendedUse: string;
   attendees: number;
   specialRequirements: string;
   contactName: string;
@@ -26,7 +26,7 @@ export default function Home() {
     date: null,
     startTime: null,
     duration: null,
-    purpose: "",
+    intendedUse: "",
     attendees: 1,
     specialRequirements: "",
     contactName: "",
@@ -167,7 +167,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             {currentStep === "calendar" && (
-              <BookingCalendar onSubmit={handleCalendarSubmit} />
+              <BookingCalendarDemo onSubmit={handleCalendarSubmit} />
             )}
 
             {currentStep === "questionnaire" && (
@@ -175,7 +175,7 @@ export default function Home() {
                 onSubmit={handleQuestionnaireSubmit}
                 onBack={handleBackToCalendar}
                 initialValues={{
-                  purpose: bookingDetails.purpose,
+                  intendedUse: bookingDetails.intendedUse,
                   attendees: bookingDetails.attendees,
                   specialRequirements: bookingDetails.specialRequirements,
                   contactName: bookingDetails.contactName,
